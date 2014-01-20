@@ -13,8 +13,8 @@ Godville bot currently SHOULD be developed to keep your character healthy as lon
 * cd Godville-bot
 * python framework/kango.py build ./
 
-Now the compiler created the directory "output" within checked out git directory, within output you'll find:
-chrome, firefox and safari directories. In each directory compiled extension for respective browser.
+Now the compiler created the directory "output" within this directory you'll find:
+chrome(.crx), firefox(.xpi) extension for respective browser.
 
 ##### For Google Chrome
 Options -> Tools -> Extensions - drag and drop an extension file into the opened window
