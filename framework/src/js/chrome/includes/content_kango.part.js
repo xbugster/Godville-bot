@@ -1,0 +1,3 @@
+kango.browser.getName=function(){return"chrome"};kango.io.getResourceUrl=function(c){return chrome.extension.getURL(c)};
+kango._initMessaging=function(){var c=[],e=Math.random().toString(),f=chrome.extension.connect({name:window==window.top?"main_"+e:e});f.onMessage.addListener(function(a){a.source=a.target=kango;"undefined"!=typeof a.tab&&(kango.tab._isPrivate=a.tab.isPrivate);for(var b=0;b<c.length;b++)c[b](a)});kango.dispatchMessage=function(a,b){f.postMessage({name:a,data:b,origin:"tab",source:null,target:null});return!0};kango.addEventListener=function(a,b){if("message"==a){for(var d=0;d<c.length;d++)if(c[d]==
+b)return;c.push(b)}};new kango.InvokeAsyncModule(kango);new kango.MessageTargetModule(kango)};
