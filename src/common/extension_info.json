@@ -1,10 +1,10 @@
 {
-    "name": "ChristmasTree",
-    "version": "1.2.0",
-    "description": "Displays Christmas tree on each loaded web page",
-    "creator": "Kango",
-    "homepage_url": "http://kangoextensions.com/",
+    "name": "GodVille Bot",
+    "version": "1.0.0",
+    "description": "The Bot that will heal you character, also may produce golden bricks, activate usable items, etc.",
+    "creator": "Valentin Ruskevych xbugster@git.com",
+    "homepage_url": "https://github.com/xbugster",
     "content_scripts": [
-        "tree.js"
+        "main.js"
     ]
 }
