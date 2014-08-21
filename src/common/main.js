@@ -46,21 +46,34 @@ var botCommander = {
     _buttons: {},
     _params: {},
     _actualParams: {},
-    _errors: {
-        firstRun: 0
-    }, // dummy, later needs to be replaced with errors manager object
+    isParamsReceived: false,
+    // dummy, later needs to be replaced with errors manager object
     init: function() {
         this._setButtons(botButtons.init());
         this._setCharParams(botCharParams.init());
         this._setActualValues();
         this._parseValues();
+
+        /**
+         * @DEBUG
+         */
+        kango.console.log(botCommander);
+        $(botCommander._buttons.doGood).css({backgroundColor:"#000000"});
+
     },
     _parseValues: function() {
           kango.console.log(this._actualParams);
     },
     _setActualValues: function() {
         for(var paramElement in this._params) {
-            this._actualParams[paramElement] = this._params[paramElement].text();
+            var _tmp = this._params[paramElement].text();
+            if(_tmp != '') {
+                this._actualParams[paramElement] = _tmp;
+                this.isParamsReceived = true;
+            } else {
+                this.isParamsReceived = false;
+            }
+
         }
     },
 
@@ -70,10 +83,6 @@ var botCommander = {
 
     _setCharParams: function(_params) {
         this._params = _params;
-    },
-
-    nullifyErrors: function() {
-        this._errors = {};
     }
 };
 
@@ -97,20 +106,6 @@ var botCharParams = {
     }
 };
 
-function runTheBot(){
-    var loaded = false;
-    if(botCommander._errors.length > 0) {
-        botCommander.nullifyErrors();
-        botCommander.init();
-        kango.console.log(botCommander);
-        $(botCommander._buttons.doGood).css({backgroundColor:"#000000"});
-        setTimeout(runTheBot(), 1000);
-    }else{
-        loaded = true;
-    }
-    return loaded;
-}
-
 /**
  * Action, Please!
  */
@@ -125,7 +120,9 @@ if( true === isWindowTop
 && true === isPathMatch
 ) {
     $(document).ready(function(){
-        runTheBot();
+        while(!botCommander.isParamsReceived) {
+            botCommander.init();
+        }
     });
 }
 
