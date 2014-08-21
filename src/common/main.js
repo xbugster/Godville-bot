@@ -24,14 +24,14 @@ _extTopIcon.click(function() {
 
 var botSettings = {
     buttonSelectors: {
-        doGood: '#action #cntrl1.enc_link',
-        doBad: '#action #cntrl1.pun_link'//,
-        //resurrect: '' // needs the selector for resurrection button
+        doGood: '#actions #cntrl1 .enc_link',
+        doBad: '#actions #cntrl1 .pun_link'//,
+        // resurrect: '#actions #cntrl1 #concrete_selector' // needs the selector for resurrection button, there is no id or class
     },
     charParamSelectors: {
-        hp: '#hk_health.l_val',
-        mana: '#cntrl.p_bar.gp_val',
-        potions: '.battery.acc_val'
+        hp: '#hk_health .l_val',
+        mana: '#cntrl .pbar .gp_val',
+        potions: '.battery .acc_val'
     },
     init: function() {
         // a method to get user defined settings.
@@ -43,18 +43,37 @@ var botSettings = {
 };
 
 var botCommander = {
-    _buttons: null,
-    _params: null,
-    _actualParams: null,
+    _buttons: {},
+    _params: {},
+    _actualParams: {},
+    _errors: {
+        firstRun: 0
+    }, // dummy, later needs to be replaced with errors manager object
     init: function() {
-        this._buttons = botButtons.init();
-        this._params = botCharParams.init();
+        this._setButtons(botButtons.init());
+        this._setCharParams(botCharParams.init());
         this._setActualValues();
+        this._parseValues();
+    },
+    _parseValues: function() {
+          kango.console.log(this._actualParams);
     },
     _setActualValues: function() {
         for(var paramElement in this._params) {
-            kango.console.log($(this._params[paramElement]).val());
+            this._actualParams[paramElement] = this._params[paramElement].text();
         }
+    },
+
+    _setButtons: function(_buttons) {
+        this._buttons = _buttons;
+    },
+
+    _setCharParams: function(_params) {
+        this._params = _params;
+    },
+
+    nullifyErrors: function() {
+        this._errors = {};
     }
 };
 
@@ -77,6 +96,21 @@ var botCharParams = {
         return _r;
     }
 };
+
+function runTheBot(){
+    var loaded = false;
+    if(botCommander._errors.length > 0) {
+        botCommander.nullifyErrors();
+        botCommander.init();
+        kango.console.log(botCommander);
+        $(botCommander._buttons.doGood).css({backgroundColor:"#000000"});
+        setTimeout(runTheBot(), 1000);
+    }else{
+        loaded = true;
+    }
+    return loaded;
+}
+
 /**
  * Action, Please!
  */
@@ -90,7 +124,8 @@ if( true === isWindowTop
 && ( true === isHostMatch || true === isHostnameMatch )
 && true === isPathMatch
 ) {
-    botCommander.init();
-    kango.console.log(botCommander);
+    $(document).ready(function(){
+        runTheBot();
+    });
 }
 
