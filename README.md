@@ -30,16 +30,16 @@ Throw an extension into browser
 Throw an extension into browser
 
 ### @TODO List
-. initializer(we can't call back from page to extension - done as delayed initializer) - done
-. character parameters getters - done
-. character parameters parsers - done
-. add minimal amounts per parameter - under development
-. settings page - under development
-. start/stop function
-. interaction process
-. implement better design(it is planed, but postponed due to "business logic" - start first)
-. additional features
-. collect data about wear available in game
-. collect data about skills available
-. collect data about monsters available
-. auto-fill quiz based on collected data in three previous tasks
+* initializer(we can't call back from page to extension - done as delayed initializer) - _done_
+* character parameters getters - _done_
+* character parameters parsers - _done_
+* add minimal amounts per parameter - _done_ also added warn_at (not yet implemeneted in work process)
+* settings page - under development
+* start/stop function
+* interaction process
+* implement better design(it is planed, but postponed due to "business logic" - start first)
+* additional features
+* collect data about wear available in game
+* collect data about skills available
+* collect data about monsters available
+* auto-fill quiz based on collected data in three previous tasks
