@@ -44,16 +44,12 @@ var botCommander = {
                              // then check if length > 0 - error appeared.
     init: function() {
         this._delayedInit();
-        /**
-         * @DEBUG
-         */
-        $(botCommander._buttons.doGood).css({backgroundColor:"#000000"});
     },
     _delayedInit: function() {
         var _self = this;
 
-        _self._setButtons(botButtons.init());
-        _self._setCharParams(botCharParams.init());
+        _self._setButtons(botButtons.fetch());
+        _self._setCharParams(botCharParams.fetch());
         _self._setActualValues();
         if(false === _self.isParamsReceived) {
             setTimeout(function(){ _self._delayedInit(); }, botCommander.initTimeout)
@@ -89,25 +85,27 @@ var botCommander = {
     }
 };
 
-var botButtons = {
-    init: function() {
+function BotSelectorFetcher(subject) {
+    this._subject = subject || {};
+    this.fetch = function() {
+        var _self = this;
         var _r = {};
-        for(var botButton in botSettings.buttonSelectors) {
-            _r[botButton] = $(botSettings.buttonSelectors[botButton]);
+        for(var botButton in _self._subject) {
+            _r[botButton] = $(_self._subject[botButton]);
         }
         return _r;
+    };
+    this.setSubject = function(subject) {
+        this._subject = subject || {};
     }
 };
 
-var botCharParams = {
-    init: function() {
-        var _r = {};
-        for(var charParam in botSettings.charParamSelectors) {
-            _r[charParam] = $(botSettings.charParamSelectors[charParam]);
-        }
-        return _r;
-    }
-};
+/**
+ * @desc selectors fetchers
+ * @type {BotSelectorFetcher}
+ */
+var botButtons = new BotSelectorFetcher(botSettings.buttonSelectors);
+var botCharParams = new BotSelectorFetcher(botSettings.charParamSelectors);
 
 
 /**
@@ -150,6 +148,7 @@ if( true === isWindowTop
 ) {
     $(document).ready(function(){
         botCommander.init();
+        setTimeout(function(){$(botCommander._buttons.doGood).css({backgroundColor:"#000000"});}, 3000);
     });
 }
 
