@@ -33,7 +33,12 @@ var botSettings = {
         mana: '#cntrl .pbar .gp_val',
         potions: '.battery .acc_val'
     },
-    initTimeout : 1000 // timeout between calls to init
+    initTimeout : 1000, // timeout between calls to init
+    defaultValues: {
+        hp : { min: 0, actual: 0, max: 0, warn_at: 0 },
+        mana : { min: 0, actual: 0, warn_at: 0 },
+        potions : { min: 0, actual: 0, warn_at: 0 }
+    }
 };
 
 var botCommander = {
@@ -47,6 +52,7 @@ var botCommander = {
     },
     fetchCharParams: function() {
         var _self = this;
+        this.isParamsReceived = false; // pre-set to false, in case we re-fetch params we won't mistake
 
         _self._setButtons(botButtons.fetch());
         _self._setCharParams(botCharParams.fetch());
@@ -59,7 +65,7 @@ var botCommander = {
     },
     _parseValues: function() {
         for(var _param in this._actualParams) {
-            this._actualParams[_param] = botParamParser[_param](this._actualParams[_param]);
+            this._actualParams[_param] = BotParamParser.parse(this._actualParams[_param], _param);
         }
         setTimeout(function(){ kango.console.log(botCommander._actualParams)}, 2000);
     },
@@ -85,6 +91,12 @@ var botCommander = {
     }
 };
 
+
+/**
+ * @desc selectors fetcher. supply object with selectors, returns selected elements under same keys as object
+ * @param object subject
+ * @constructor
+ */
 function BotSelectorFetcher(subject) {
     this._subject = subject || {};
     this.fetch = function() {
@@ -113,23 +125,20 @@ var botCharParams = new BotSelectorFetcher(botSettings.charParamSelectors);
  * @todo warn_at - needs to be set by user in bot settings, warn user using chrome popup about low/lack amount of subj.
  * @type {{hp: hp, mana: mana, potions: potions}}
  */
-var botParamParser = {
+var BotParamParser = {
     hp: function(_param) {
-        var _tmp = { min: 0, actual: 0, max: 0, warn_at: 0 }; // warn and resurrect if auto-resurrect is set
-        var arr = _param.split(' / ');
-        _tmp.actual = parseInt(arr[0]);
-        _tmp.max = parseInt(arr[1]);
-        return _tmp;
+        var arr = _param.split(' / ').map(function(val){return parseInt(val);});
+        return {actual: arr[0], max: arr[1]};
     },
     mana: function(_param) {
-        var _tmp = { min: 0, actual: 0, warn_at: 0 };
-        _tmp.actual = parseInt(_param.replace('%', ''));
-        return _tmp;
+        return {actual: parseInt(_param.replace('%', ''))};
     },
     potions: function(_param){
-        var _tmp = { min: 0, actual: 0, warn_at: 0 };
-        _tmp.actual = parseInt(_param);
-        return _tmp;
+        return {actual: parseInt(_param)};
+    },
+    parse: function(_param, _paramName) {
+        var _tmp = botSettings.defaultValues[_paramName];
+        return $.extend(_tmp, this[_paramName](_param));
     }
 };
 
