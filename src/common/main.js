@@ -22,7 +22,7 @@ _extTopIcon.click(function() {
     alert('Extention Panel Click');
 });
 
-var botSettings = {
+var botDefaultSettings = {
     buttonSelectors: {
         doGood: '#actions #cntrl1 .enc_link',
         doBad: '#actions #cntrl1 .pun_link'//,
@@ -41,6 +41,10 @@ var botSettings = {
     }
 };
 
+var botUserSettings = {};
+
+var botSettings = $.extend(botDefaultSettings, botUserSettings);
+
 var botCommander = {
     _buttons: {},
     _params: {},
@@ -54,8 +58,8 @@ var botCommander = {
         var _self = this;
         this.isParamsReceived = false; // pre-set to false, in case we re-fetch params we won't mistake
 
-        _self._setButtons(botButtons.fetch());
-        _self._setCharParams(botCharParams.fetch());
+        _self.setButtons(botButtons.fetch());
+        _self.setCharParams(botCharParams.fetch());
         _self._setActualValues();
         if(false === _self.isParamsReceived) {
             setTimeout(function(){ _self.fetchCharParams(); }, botSettings.initTimeout)
@@ -63,13 +67,13 @@ var botCommander = {
             _self._parseValues();
         }
     },
-    _parseValues: function() {
+    _parseValues: function() { // also move to param parser
         for(var _param in this._actualParams) {
             this._actualParams[_param] = BotParamParser.parse(this._actualParams[_param], _param);
         }
         setTimeout(function(){ kango.console.log(botCommander._actualParams)}, 2000);
     },
-    _setActualValues: function() {
+    _setActualValues: function() { // move to parser
         for(var paramElement in this._params) {
             var _tmp = this._params[paramElement].text();
             if(_tmp != '') {
@@ -82,11 +86,11 @@ var botCommander = {
         }
     },
 
-    _setButtons: function(_buttons) {
+    setButtons: function(_buttons) {
         this._buttons = _buttons;
     },
 
-    _setCharParams: function(_params) {
+    setCharParams: function(_params) {
         this._params = _params;
     }
 };
@@ -121,7 +125,6 @@ var botCharParams = new BotSelectorFetcher(botSettings.charParamSelectors);
 
 
 /**
- * @todo default values needs to be moved out to settings(abstraction level setup?)
  * @todo warn_at - needs to be set by user in bot settings, warn user using chrome popup about low/lack amount of subj.
  * @type {{hp: hp, mana: mana, potions: potions}}
  */
