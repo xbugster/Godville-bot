@@ -33,36 +33,39 @@ var botSettings = {
         mana: '#cntrl .pbar .gp_val',
         potions: '.battery .acc_val'
     },
-    init: function() {
-        // a method to get user defined settings.
-        // such as lower level hp
-        // bricks forging
-        // until potions amount is higher than
-        // etc.
-    }
+    initTimeout : 1000 // timeout between calls to init
 };
 
 var botCommander = {
     _buttons: {},
     _params: {},
     _actualParams: {},
-    isParamsReceived: false,
-    // dummy, later needs to be replaced with errors manager object
+    isParamsReceived: false, // this should be errors object, push errors into the object
+                             // then check if length > 0 - error appeared.
     init: function() {
-        this._setButtons(botButtons.init());
-        this._setCharParams(botCharParams.init());
-        this._setActualValues();
-        this._parseValues();
-
+        this._delayedInit();
         /**
          * @DEBUG
          */
-        kango.console.log(botCommander);
         $(botCommander._buttons.doGood).css({backgroundColor:"#000000"});
+    },
+    _delayedInit: function() {
+        var _self = this;
 
+        _self._setButtons(botButtons.init());
+        _self._setCharParams(botCharParams.init());
+        _self._setActualValues();
+        if(false === _self.isParamsReceived) {
+            setTimeout(function(){ _self._delayedInit(); }, botCommander.initTimeout)
+        } else {
+            _self._parseValues();
+        }
     },
     _parseValues: function() {
-          kango.console.log(this._actualParams);
+        for(var _param in this._actualParams) {
+            this._actualParams[_param] = botParamParser[_param](this._actualParams[_param]);
+        }
+        setTimeout(function(){ kango.console.log(botCommander._actualParams)}, 2000);
     },
     _setActualValues: function() {
         for(var paramElement in this._params) {
@@ -106,6 +109,23 @@ var botCharParams = {
     }
 };
 
+var botParamParser = {
+    hp: function(_param) {
+        var arr = [];
+        var _tmp = { actual: 0, max: 0};
+        arr = _param.split(' / ');
+        _tmp.actual = parseInt(arr[0]);
+        _tmp.max = parseInt(arr[1]);
+        return _tmp;
+    },
+    mana: function(_param) {
+        return parseInt(_param.replace('%', ''));
+    },
+    potions: function(_param){
+        return parseInt(_param);
+    }
+};
+
 /**
  * Action, Please!
  */
@@ -120,9 +140,7 @@ if( true === isWindowTop
 && true === isPathMatch
 ) {
     $(document).ready(function(){
-        while(!botCommander.isParamsReceived) {
-            botCommander.init();
-        }
+        botCommander.init();
     });
 }
 
