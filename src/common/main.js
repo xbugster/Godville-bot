@@ -43,16 +43,16 @@ var botCommander = {
     isParamsReceived: false, // this should be errors object, push errors into the object
                              // then check if length > 0 - error appeared.
     init: function() {
-        this._delayedInit();
+        this.fetchCharParams();
     },
-    _delayedInit: function() {
+    fetchCharParams: function() {
         var _self = this;
 
         _self._setButtons(botButtons.fetch());
         _self._setCharParams(botCharParams.fetch());
         _self._setActualValues();
         if(false === _self.isParamsReceived) {
-            setTimeout(function(){ _self._delayedInit(); }, botCommander.initTimeout)
+            setTimeout(function(){ _self.fetchCharParams(); }, botSettings.initTimeout)
         } else {
             _self._parseValues();
         }
