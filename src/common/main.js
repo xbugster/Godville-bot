@@ -109,20 +109,29 @@ var botCharParams = {
     }
 };
 
+
+/**
+ * @todo default values needs to be moved out to settings(abstraction level setup?)
+ * @todo warn_at - needs to be set by user in bot settings, warn user using chrome popup about low/lack amount of subj.
+ * @type {{hp: hp, mana: mana, potions: potions}}
+ */
 var botParamParser = {
     hp: function(_param) {
-        var arr = [];
-        var _tmp = { actual: 0, max: 0};
-        arr = _param.split(' / ');
+        var _tmp = { min: 0, actual: 0, max: 0, warn_at: 0 }; // warn and resurrect if auto-resurrect is set
+        var arr = _param.split(' / ');
         _tmp.actual = parseInt(arr[0]);
         _tmp.max = parseInt(arr[1]);
         return _tmp;
     },
     mana: function(_param) {
-        return parseInt(_param.replace('%', ''));
+        var _tmp = { min: 0, actual: 0, warn_at: 0 };
+        _tmp.actual = parseInt(_param.replace('%', ''));
+        return _tmp;
     },
     potions: function(_param){
-        return parseInt(_param);
+        var _tmp = { min: 0, actual: 0, warn_at: 0 };
+        _tmp.actual = parseInt(_param);
+        return _tmp;
     }
 };
 
