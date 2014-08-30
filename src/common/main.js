@@ -42,8 +42,9 @@ var botDefaultSettings = {
 };
 
 var botUserSettings = {};
-
+var botUserSettings = {};
 var botSettings = $.extend(botDefaultSettings, botUserSettings);
+var botSettings = $.extend(botSettings, botUserSettings);
 
 var botCommander = {
     _buttons: {},
@@ -123,6 +124,10 @@ function BotSelectorFetcher(subject) {
 var botButtons = new BotSelectorFetcher(botSettings.buttonSelectors);
 var botCharParams = new BotSelectorFetcher(botSettings.charParamSelectors);
 
+/**
+ * @todo : botParam needs to be creater, BotParamParser needs to be encapsulated within as Parser,
+ * @todo : botSelectorsFetcher needs to be also encapsulated
+ */
 
 /**
  * @todo warn_at - needs to be set by user in bot settings, warn user using chrome popup about low/lack amount of subj.
