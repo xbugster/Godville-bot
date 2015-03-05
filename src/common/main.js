@@ -42,9 +42,7 @@ var botDefaultSettings = {
 };
 
 var botUserSettings = {};
-var botUserSettings = {};
 var botSettings = $.extend(botDefaultSettings, botUserSettings);
-var botSettings = $.extend(botSettings, botUserSettings);
 
 var botCommander = {
     _buttons: {},
@@ -128,6 +126,44 @@ var botCharParams = new BotSelectorFetcher(botSettings.charParamSelectors);
  * @todo : botParam needs to be creater, BotParamParser needs to be encapsulated within as Parser,
  * @todo : botSelectorsFetcher needs to be also encapsulated
  */
+
+var CharacterElements = {
+    /**
+     * not in use yet
+     */
+    _charButtons: {
+
+    },
+    _charParams : {
+
+    },
+    _isParamsReceived : false,
+    Parser : {
+        hp: function(_param) {
+            var arr = _param.split(' / ').map(function(val){return parseInt(val);});
+            return {actual: arr[0], max: arr[1]};
+        },
+        mana: function(_param) {
+            return {actual: parseInt(_param.replace('%', ''))};
+        },
+        potions: function(_param){
+            return {actual: parseInt(_param)};
+        },
+        parse: function(_param, _paramName) {
+            var _tmp = botSettings.defaultValues[_paramName];
+            return $.extend(_tmp, this[_paramName](_param));
+        }
+    },
+    isFetched : function() {
+        return this._isParamsReceived;
+    },
+    getCharacterParameters : function(name) {
+        if( typeof name != 'undefined' ) {
+            return this._charParams[name];
+        }
+        return this._charParams;
+    }
+}
 
 /**
  * @todo warn_at - needs to be set by user in bot settings, warn user using chrome popup about low/lack amount of subj.
